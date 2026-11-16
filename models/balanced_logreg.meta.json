@@ -1,0 +1,23 @@
+{
+  "model": "logreg",
+  "config": "balanced",
+  "features": [
+    "profile pic",
+    "nums/length username",
+    "fullname words",
+    "nums/length fullname",
+    "name==username",
+    "description length",
+    "external URL",
+    "private",
+    "#posts",
+    "#followers",
+    "#follows"
+  ],
+  "n_train": 574,
+  "fake_share_train": 0.5,
+  "best_params": {
+    "clf__C": 10
+  },
+  "tuned_threshold": 0.42999999999999994
+}

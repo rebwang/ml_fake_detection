@@ -1,0 +1,25 @@
+{
+  "model": "xgb",
+  "config": "balanced",
+  "features": [
+    "profile pic",
+    "nums/length username",
+    "fullname words",
+    "nums/length fullname",
+    "name==username",
+    "description length",
+    "external URL",
+    "private",
+    "#posts",
+    "#followers",
+    "#follows"
+  ],
+  "n_train": 574,
+  "fake_share_train": 0.5,
+  "best_params": {
+    "clf__learning_rate": 0.05,
+    "clf__max_depth": 2,
+    "clf__subsample": 1.0
+  },
+  "tuned_threshold": 0.62
+}

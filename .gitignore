@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Live Instagram sample (personal data, keep out of git)
+data/live_*
