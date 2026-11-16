@@ -19,7 +19,7 @@ Open the `profile_url` for each profile and look at the actual posts, not only t
 **Private accounts:** label them from what you can see, and leave the label blank if there isn't enough to judge.
 
 **After labeling:**
-1. Run `python src/evaluate_live.py --live data/live_to_label.csv`. It reports Cohen's kappa between the two labelers.
+1. Compute Cohen's kappa between the two labelers on the profiles both labeled, e.g. `sklearn.metrics.cohen_kappa_score(df.labeler_a, df.labeler_b)`.
 2. Settle every disagreement together and write the final label in the `fake` column. Drop profiles that are still unsure.
 3. About 2 to 3 weeks later, recheck the profiles labeled fake. An account that has since been deleted or suspended is extra evidence that it was fake. Report how many.
 4. Save the file as `data/live_labeled.csv` and remove usernames from anything you share.

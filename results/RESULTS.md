@@ -22,7 +22,7 @@ Full numbers: `summary.csv` (default 0.5 and tuned thresholds) and `metrics_all_
 
 # Live sample results
 
-Labeled live Instagram profiles (commenters on public posts, collected 2026-11-14), scored with the six saved models. Produced by `src/analyze_live.py`; the tables between the markers are regenerated each time it runs.
+Labeled live Instagram profiles (commenters on public posts, collected 2026-11-14), scored with the six saved models. Produced by `notebooks/03_evaluate_live.ipynb`, which has the same tables, charts and findings.
 
 <!-- live-auto-start -->
 

@@ -3,18 +3,60 @@
   streamlit run app.py
 """
 import json
-import sys
+import re
 from pathlib import Path
 
 import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+from sklearn.metrics import confusion_matrix, precision_score, recall_score
 
-sys.path.insert(0, str(Path(__file__).parent / "src"))
-from features import COUNT_FEATURES, FEATURES, LABEL, profile_to_features  # noqa: E402
-from metrics import evaluate  # noqa: E402
-from models import OTHER  # noqa: E402
+# The 11 features, named as in the Kaggle "Instagram Fake Spammer Genuine Accounts" files
+# (same definitions as notebooks/01_train_models.ipynb and 02_collect_live_data.ipynb).
+FEATURES = [
+    "profile pic", "nums/length username", "fullname words", "nums/length fullname",
+    "name==username", "description length", "external URL", "private",
+    "#posts", "#followers", "#follows",
+]
+LABEL = "fake"
+COUNT_FEATURES = ["description length", "#posts", "#followers", "#follows"]
+OTHER = [f for f in FEATURES if f not in COUNT_FEATURES]  # column order after preprocessing
+
+
+def _digit_ratio(s: str) -> float:
+    s = s or ""
+    return round(sum(c.isdigit() for c in s) / len(s), 2) if s else 0.0
+
+
+def profile_to_features(username, full_name, biography, external_url,
+                        is_private, posts, followers, follows, has_profile_pic) -> dict:
+    """Turn raw public profile metadata into the 11 dataset features."""
+    full_name = (full_name or "").strip()
+    norm = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())
+    return {
+        "profile pic": int(bool(has_profile_pic)),
+        "nums/length username": _digit_ratio(username),
+        "fullname words": len(full_name.split()),
+        "nums/length fullname": _digit_ratio(full_name),
+        "name==username": int(bool(full_name) and norm(full_name) == norm(username)),
+        "description length": len(biography or ""),
+        "external URL": int(bool(external_url)),
+        "private": int(bool(is_private)),
+        "#posts": int(posts or 0),
+        "#followers": int(followers or 0),
+        "#follows": int(follows or 0),
+    }
+
+
+def evaluate(y_true, prob, threshold=0.5) -> dict:
+    """Precision / recall / confusion counts for the fake class at a threshold."""
+    y_true = np.asarray(y_true)
+    pred = (prob >= threshold).astype(int)
+    tn, fp, fn, tp = confusion_matrix(y_true, pred, labels=[0, 1]).ravel()
+    return {"precision": precision_score(y_true, pred, zero_division=0),
+            "recall": recall_score(y_true, pred, zero_division=0),
+            "tp": int(tp), "fp": int(fp), "fn": int(fn), "tn": int(tn)}
 
 MODELS, DATA, RESULTS = Path("models"), Path("data"), Path("results")
 NAMES = {"logreg": "Logistic Regression", "rf": "Random Forest", "xgb": "XGBoost"}
@@ -48,7 +90,7 @@ def contributions(model, name, x: pd.DataFrame) -> pd.Series:
 
 models = load_models()
 if not models:
-    st.error("No saved models found. Run `python src/train.py` first.")
+    st.error("No saved models found. Run `notebooks/01_train_models.ipynb` first.")
     st.stop()
 
 st.title("Fake account risk score")

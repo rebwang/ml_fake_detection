@@ -11,15 +11,20 @@ pip install -r requirements.txt
 ```
 Put the Kaggle files `train.csv` and `test.csv` (Instagram Fake Spammer Genuine Accounts) in `data/`.
 
-## 1. Train and save models: `src/train.py`
+## Pipeline (run the notebooks in order)
+All code lives in the three notebooks in `notebooks/`. Each is self-contained (no shared modules) and explains its steps for the report. Run them from the project root or from `notebooks/`. To re-run all three and save the outputs in place:
 ```bash
-python src/train.py            # --seeds 10 --fake-share 0.10 are the defaults
+cd notebooks
+for n in 01_train_models 02_collect_live_data 03_evaluate_live; do jupyter nbconvert --execute --to notebook --inplace "$n.ipynb"; done
 ```
+
+### 1. Train and save models: `notebooks/01_train_models.ipynb`
+Takes about 2 to 3 minutes.
 - **Balanced (50/50):** trains on Kaggle's train.csv and tests on test.csv. Exact duplicate rows are dropped from train.csv first.
 - **Imbalanced (90/10):** keeps every genuine account and randomly downsamples fake accounts to 10%, in both train and test. Train and test are built from Kaggle's own split, so they never overlap. There are only about 32 fake accounts in training and 7 in test, so this is repeated over 10 random seeds and the mean ± std is reported. The seed-0 models are the ones saved.
 - **Models:** Logistic Regression, Random Forest and XGBoost. Hyperparameters are tuned with stratified 5-fold cross-validation, scored by PR-AUC. In the 90/10 setup the fake class is reweighted (`class_weight` / `scale_pos_weight`).
 - **Thresholds:** each model is scored at the default 0.5 and at a "tuned" threshold. The tuned threshold maximizes F1 on out-of-fold training predictions and never looks at the test set.
-- **Cross-evaluation:** every model is scored on both the 50/50 and the 90/10 test sets. This shows what happens when a model trained on balanced data meets realistic class ratios.
+- **Cross-evaluation:** every model is scored on both the 50/50 and the 90/10 test sets.
 
 Outputs:
 - `models/{balanced,imbalanced}_{logreg,rf,xgb}.joblib`: the full pipeline (preprocessing + model).
@@ -27,33 +32,19 @@ Outputs:
 - `models/*.meta.json`: training size, class ratio, best hyperparameters and tuned threshold.
 - `results/summary.csv` and `results/metrics_all_seeds.csv`.
 
-## 2. Collect the live sample: `src/collect_live.py`
-1. Build `data/live_usernames.txt` (about 200 to 300 usernames) from the commenters on a few public posts. Create `data/seed_posts.txt` with 3 to 5 public post or reel URLs, one per line. Mix ordinary posts with posts that attract spam (giveaways, promotions). Don't pick posts by how fake the commenters look, or the sample is no longer uncurated. Then run:
-   ```bash
-   export APIFY_TOKEN=...   # free Apify account → Settings → Integrations
-   python src/collect_live.py --comments-of data/seed_posts.txt --per-post 80
-   ```
-   This uses Apify's official comment scraper. It merges the commenters into `data/live_usernames.txt` without duplicates, so you can run it again with more posts. You can also add usernames to the file by hand.
-2. Fetch the profiles:
-   ```bash
-   export APIFY_TOKEN=...   # free Apify account → Settings → Integrations
-   python src/collect_live.py --source apify --usernames data/live_usernames.txt
-   ```
-   Backup: `--source instaloader --login <throwaway account>`. It is slow on purpose; keep the sample small.
-3. This writes `data/live_to_label.csv`, which has the same 11 features as Kaggle plus empty label columns.
+### 2. Collect the live sample: `notebooks/02_collect_live_data.ipynb`
+- **Sampling:** collects the commenters on the public posts listed in `data/seed_posts.txt` (Apify comment scraper), then fetches their public profiles (Apify profile scraper). The seed posts mix ordinary posts with posts that attract spam (giveaways, promotions), and were not picked by how fake the commenters look.
+- **Running the scrapers:** the Apify calls only run with `RUN_COLLECTION = True` and `APIFY_TOKEN` set (free Apify account → Settings → Integrations). By default the notebook rebuilds the feature table from the saved `data/live_raw.jsonl` and checks it against `data/live_labeled.csv`.
+- **Default avatar:** "no profile picture" is detected from Instagram's default avatar image id, and that id can change. **Check `profile pic` by eye on a few rows** after a new collection.
+- **Privacy:** usernames are never printed.
 
-**Check `profile pic` by eye on a few rows.** The script detects Instagram's default avatar from its image id, and that id can change.
-
-## 3. Label: see `LABELING_RUBRIC.md`
+### 3. Label: see `LABELING_RUBRIC.md`
 Two people label every profile independently. Then report Cohen's kappa, settle disagreements, and save the result as `data/live_labeled.csv`.
 
-## 4. Side-by-side "in the wild" evaluation: `src/evaluate_live.py`
-```bash
-python src/evaluate_live.py --live data/live_labeled.csv
-```
-This scores the live sample with all 6 saved models, at both thresholds, and writes `results/live_results.csv`.
+### 4. Evaluate "in the wild": `notebooks/03_evaluate_live.ipynb`
+Scores the labeled live sample with all 6 saved models at both thresholds and computes stratified bootstrap 95% CIs. It also draws PR curves (live vs Kaggle), compares feature distributions (live vs Kaggle) and analyses the false positives. It ends with the findings and limitations. Results are summarised in `results/RESULTS.md`.
 
-## 5. Dashboard: `app.py`
+## Dashboard: `app.py`
 ```bash
 streamlit run app.py
 ```

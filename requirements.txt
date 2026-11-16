@@ -7,3 +7,6 @@ matplotlib>=3.7
 streamlit>=1.30
 instaloader>=4.10
 requests>=2.31
+jupyter>=1.0
+ipykernel>=6.0
+nbconvert>=7.0
