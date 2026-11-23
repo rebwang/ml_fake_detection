@@ -1,0 +1,24 @@
+{
+  "model": "rf",
+  "config": "balanced",
+  "features": [
+    "profile pic",
+    "nums/length username",
+    "fullname words",
+    "nums/length fullname",
+    "name==username",
+    "description length",
+    "external URL",
+    "private",
+    "#posts",
+    "#followers",
+    "#follows"
+  ],
+  "n_train": 574,
+  "fake_share_train": 0.5,
+  "best_params": {
+    "clf__max_depth": 6,
+    "clf__min_samples_leaf": 1
+  },
+  "tuned_threshold": 0.4099999999999999
+}
