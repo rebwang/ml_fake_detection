@@ -22,53 +22,56 @@ Full numbers: `summary.csv` (default 0.5 and tuned thresholds) and `metrics_all_
 
 # Live sample results
 
-Labeled live Instagram profiles (commenters on public posts, collected 2026-11-14), scored with the six saved models. Produced by `notebooks/03_evaluate_live.ipynb`, which has the same tables, charts and findings.
+Labeled live Instagram profiles (commenters on public posts, collected 2026-11-14, relabeled 2026-11-22), scored with the six saved models. Produced by `notebooks/03_evaluate_live.ipynb`, which has the same tables, charts and findings.
 
 <!-- live-auto-start -->
 
-**Live vs Kaggle, default threshold 0.5.** Live: 221 labeled profiles, 26 fake (11.8%). Brackets are stratified bootstrap 95% CIs (1000 resamples). Kaggle columns are the mean over the 10 90/10 test samples.
+**Live vs Kaggle, default threshold 0.5.** Live: 239 labeled profiles, 14 fake (5.9%). Brackets are stratified bootstrap 95% CIs (1000 resamples). Kaggle columns are the mean over the 10 90/10 test samples.
 
 | Model | Kaggle 90/10 P / R / F1 | Kaggle 90/10 PR-AUC | Live precision | Live recall | Live F1 | Live PR-AUC | Live FP / genuine |
 |---|---|---|---|---|---|---|---|
-| LogReg (50/50) | 0.49 / 0.97 / 0.65 | 0.89 | 0.24 [0.20–0.29] | 0.88 [0.77–1.00] | 0.37 [0.32–0.44] | 0.50 [0.36–0.70] | 74 / 195 |
-| RF (50/50) | 0.61 / 0.90 / 0.73 | 0.93 | 0.30 [0.24–0.36] | 0.85 [0.73–0.96] | 0.44 [0.37–0.52] | 0.44 [0.31–0.62] | 52 / 195 |
-| XGBoost (50/50) | 0.58 / 0.97 / 0.72 | 0.95 | 0.28 [0.23–0.33] | 0.92 [0.81–1.00] | 0.42 [0.36–0.50] | 0.57 [0.43–0.74] | 63 / 195 |
-| LogReg (90/10) | 0.61 / 0.89 / 0.71 | 0.87 | 0.32 [0.27–0.40] | 0.85 [0.73–0.96] | 0.47 [0.39–0.56] | 0.46 [0.32–0.64] | 46 / 195 |
-| RF (90/10) | 0.74 / 0.73 / 0.71 | 0.87 | 0.33 [0.22–0.47] | 0.46 [0.27–0.65] | 0.39 [0.25–0.52] | 0.39 [0.27–0.56] | 24 / 195 |
-| XGBoost (90/10) | 0.83 / 0.70 / 0.74 | 0.89 | 0.33 [0.24–0.44] | 0.62 [0.42–0.81] | 0.43 [0.32–0.55] | 0.42 [0.30–0.59] | 33 / 195 |
+| LogReg (50/50) | 0.49 / 0.97 / 0.65 | 0.89 | 0.13 [0.11–0.15] | 1.00 [1.00–1.00] | 0.23 [0.21–0.26] | 0.76 [0.58–0.94] | 94 / 225 |
+| RF (50/50) | 0.61 / 0.90 / 0.73 | 0.93 | 0.17 [0.15–0.20] | 1.00 [1.00–1.00] | 0.29 [0.25–0.33] | 0.64 [0.43–0.86] | 69 / 225 |
+| XGBoost (50/50) | 0.58 / 0.97 / 0.72 | 0.95 | 0.14 [0.12–0.16] | 1.00 [1.00–1.00] | 0.25 [0.22–0.28] | 0.77 [0.59–0.93] | 85 / 225 |
+| LogReg (90/10) | 0.61 / 0.89 / 0.71 | 0.87 | 0.18 [0.16–0.22] | 1.00 [1.00–1.00] | 0.31 [0.27–0.36] | 0.72 [0.52–0.92] | 62 / 225 |
+| RF (90/10) | 0.74 / 0.73 / 0.71 | 0.87 | 0.24 [0.17–0.33] | 0.79 [0.57–1.00] | 0.37 [0.26–0.49] | 0.56 [0.35–0.79] | 34 / 225 |
+| XGBoost (90/10) | 0.83 / 0.70 / 0.74 | 0.89 | 0.24 [0.20–0.30] | 1.00 [1.00–1.00] | 0.39 [0.33–0.46] | 0.59 [0.40–0.79] | 44 / 225 |
 
 **Feature shift, live vs Kaggle (Kaggle = train.csv).**
 
 | statistic | Kaggle genuine | live genuine | Kaggle fake | live fake |
 |---|---|---|---|---|
-| n | 288 | 195 | 288 | 26 |
-| median #posts | 74 | 58 | 0 | 0.50 |
-| median #followers | 662 | 270 | 40 | 66 |
-| median #follows | 431 | 603 | 70 | 982 |
-| median follows/followers | 0.90 | 2.31 | 2.28 | 19 |
-| % private | 40 | 37 | 37 | 35 |
-| % no profile pic | 0.69 | 2.56 | 59 | 23 |
-| % external URL | 23 | 17 | 0 | 0 |
-| % username has digits | 19 | 37 | 77 | 69 |
-| mean digit share username | 0.04 | 0.09 | 0.29 | 0.23 |
-| median description length | 27 | 24 | 0 | 0 |
-| % 0 posts | 1.39 | 11 | 53 | 50 |
+| n | 288 | 225 | 288 | 14 |
+| median #posts | 74 | 44 | 0 | 0 |
+| median #followers | 662 | 229 | 40 | 0.50 |
+| median #follows | 431 | 603 | 70 | 568 |
+| median follows/followers | 0.90 | 2.99 | 2.28 | 48 |
+| median description length | 27 | 17 | 0 | 0 |
+| median fullname words | 2 | 2 | 1 | 0.50 |
+| % private | 40 | 39 | 37 | 43 |
+| % no profile pic | 0.69 | 3.11 | 59 | 64 |
+| % external URL | 23 | 15 | 0 | 0 |
+| % name==username | 0.35 | 12 | 6.60 | 0 |
+| % username has digits | 19 | 39 | 77 | 79 |
+| mean digit share username | 0.04 | 0.09 | 0.29 | 0.34 |
+| % 0 posts | 1.39 | 14 | 53 | 79 |
+| % empty bio | 27 | 42 | 86 | 93 |
 
 **False positives vs the true classes** (FP = genuine accounts flagged at 0.5).
 
-| statistic | FP balanced_xgb | FP imbalanced_logreg | live genuine (all) | live fake | Kaggle train genuine | Kaggle train fake |
-|---|---|---|---|---|---|---|
-| n | 63 | 46 | 195 | 26 | 288 | 288 |
-| median #posts | 4 | 1 | 58 | 0.50 | 74 | 0 |
-| median #followers | 43 | 40 | 270 | 66 | 662 | 40 |
-| median #follows | 180 | 138 | 603 | 982 | 431 | 70 |
-| % private | 35 | 17 | 37 | 35 | 40 | 37 |
-| % no profile pic | 7.94 | 11 | 2.56 | 23 | 0.69 | 59 |
-| % external URL | 3.17 | 2.17 | 17 | 0 | 23 | 0 |
-| % username has digits | 62 | 70 | 37 | 69 | 19 | 77 |
-| % empty bio | 63 | 54 | 38 | 85 | 27 | 86 |
+| statistic | FP XGBoost (50/50) | TN XGBoost (50/50) | FP LogReg (90/10) | TN LogReg (90/10) | live genuine (all) | live fake | Kaggle train genuine | Kaggle train fake |
+|---|---|---|---|---|---|---|---|---|
+| n | 85 | 140 | 62 | 163 | 225 | 14 | 288 | 288 |
+| median #posts | 3 | 182 | 1 | 111 | 44 | 0 | 74 | 0 |
+| median #followers | 43 | 406 | 40 | 344 | 229 | 0.50 | 662 | 40 |
+| median #follows | 271 | 822 | 176 | 894 | 603 | 568 | 431 | 70 |
+| % private | 38 | 40 | 19 | 47 | 39 | 43 | 40 | 37 |
+| % no profile pic | 8.24 | 0 | 11 | 0 | 3.11 | 64 | 0.69 | 59 |
+| % external URL | 2.35 | 23 | 1.61 | 20 | 15 | 0 | 23 | 0 |
+| % username has digits | 59 | 26 | 68 | 28 | 39 | 79 | 19 | 77 |
+| % empty bio | 67 | 27 | 60 | 36 | 42 | 93 | 27 | 86 |
 
-**Accounts that disappeared after collection.** 1 account(s) marked `gone` (0 labeled). Model scores:
+**Accounts that disappeared after collection.** 1 account(s) marked `gone` (1 labeled, fake). Model scores:
 
 | model | mean_p_fake | share_flagged_0.5 |
 |---|---|---|
@@ -79,23 +82,23 @@ Labeled live Instagram profiles (commenters on public posts, collected 2026-11-1
 | RF (90/10) | 0.99 | 1.0 |
 | XGBoost (90/10) | 1.0 | 1.0 |
 
-Files: `live_ci.csv`, `live_pr_curves.png`, `live_error_analysis.csv`, `live_vs_kaggle_shift.csv`.
+Files: `live_results.csv`, `live_ci.csv`, `live_pr_curves.png`, `live_error_analysis.csv`, `live_vs_kaggle_shift.csv`.
 
 <!-- live-auto-end -->
 
 ## What this shows
-- **Every model ranks live accounts far worse than Kaggle accounts.** Live PR-AUC is 0.39–0.57 against 0.87–0.95 on the Kaggle 90/10 test sets. ROC-AUC stays around 0.84–0.89, so the models still separate the classes somewhat, but not well enough at an 11.8% base rate.
-- **Precision collapses; recall mostly survives.** The 50/50 models catch 85–92% of fakes but flag 52–74 of the 195 genuine accounts (27–38%), so precision is only 0.24–0.30. The 90/10 models flag fewer genuine accounts (24–46) but RF and XGBoost then miss 38–54% of fakes. Precision CIs overlap across all six models, so no model is clearly better on live data. XGBoost (50/50) has the best point PR-AUC (0.57), as on Kaggle.
-- **Thresholds tuned on Kaggle don't help on live data.** LogReg (90/10) at its tuned 0.68 cuts false positives from 46 to 28 but recall falls from 0.85 to 0.65; XGBoost (90/10) at 0.85 has the fewest false positives (18) but misses 15 of 26 fakes. No tuned threshold gets precision above 0.38 (`live_results.csv`).
-- **The cause is domain shift in the genuine class.** Live genuine accounts are much less "active" than Kaggle genuine accounts: median followers 270 vs 662, follows/followers 2.3 vs 0.9, 11% with zero posts vs 1.4%, 37% with digits in the username vs 19%, and 38% with an empty bio vs 27%. Each of these moves them toward what the models learned as "fake".
-- **The false positives are exactly those low-activity genuine accounts.** The genuine accounts that XGBoost (50/50) flags have a median of 4 posts and 43 followers, 30% have zero posts, 62% have digits in the username, and 63% have an empty bio. That profile is close to the Kaggle fake class (median 0 posts, 40 followers, 77% digits, 86% empty bio). The features cannot tell a lurker or new real user from a spam account. The LogReg (90/10) false positives look the same.
-- **Live fakes also look different from Kaggle fakes.** Only 23% of live fakes lack a profile picture (59% in Kaggle), and they follow far more accounts (median 982 vs 70). Kaggle's fakes are mostly empty shells; the live fakes are follow-spam accounts with a picture. The models lean on "no profile picture", which is less informative here.
-- **Takeaway for the report:** the Kaggle results do not transfer. The class ratio was not the main problem; the feature distributions of both classes moved. A deployable model would need training data from the target population, or features beyond these 11 (e.g. post content, comment behaviour, account age).
+- **The models still rank live accounts well, but the base rate is low.** Live ROC-AUC is 0.93–0.98, close to the Kaggle 90/10 test sets (0.98–0.99). Live PR-AUC is 0.56–0.77, against 0.87–0.95 on Kaggle 90/10. Part of that gap is the lower base rate (5.9% fake vs 10%), which pulls PR-AUC down even for the same ranking quality.
+- **Recall survives; precision collapses.** Five of the six models catch all 14 fakes at 0.5 (RF 90/10 catches 11). But the 50/50 models flag 69–94 of the 225 genuine accounts (31–42%), so their precision is only 0.13–0.17. The 90/10 models flag fewer genuine accounts (34–62) and reach precision 0.18–0.24.
+- **Training at the realistic ratio helps on live data.** XGBoost (90/10) has the best F1 at 0.5 (0.39, CI 0.33–0.46), with full recall and 44 false positives. Its precision CI (0.20–0.30) and F1 CI do not overlap those of LogReg (50/50) and XGBoost (50/50). XGBoost (50/50) and LogReg (50/50) still have the best PR-AUC (0.77 and 0.76): they rank well, but 0.5 is far too loose a threshold for a 5.9% base rate.
+- **Tuned thresholds help a little.** LogReg (90/10) at its tuned 0.68 cuts false positives from 62 to 39 and keeps recall at 1.00 (precision 0.26, F1 0.42, the best of any configuration). XGBoost (90/10) at 0.85 has the fewest false positives (25) but misses 4 of 14 fakes. No tuned threshold gets precision above 0.29.
+- **The cause is domain shift in the genuine class.** Live genuine accounts are much less "active" than Kaggle genuine accounts: median followers 229 vs 662, follows/followers 3.0 vs 0.9, 14% with zero posts vs 1.4%, 39% with digits in the username vs 19%, and 42% with an empty bio vs 27%. Each of these moves them toward what the models learned as "fake".
+- **The false positives are low-activity genuine users.** The genuine accounts XGBoost (50/50) flags have a median of 3 posts and 43 followers. 32% have zero posts, 59% have digits in the username and 67% have an empty bio, which is close to the Kaggle fake profile. The LogReg (90/10) false positives look the same (median 1 post, 40 followers, 40% zero posts). The 11 features cannot tell a lurker or new real user from a spam account.
+- **Live fakes look like Kaggle fakes, except that they follow many accounts.** 64% lack a profile picture (59% in Kaggle), 79% have zero posts (53%) and 93% have an empty bio (86%), so they are empty shells that the models catch easily. The difference is follows: median 568 vs 70, with a median of 0.5 followers.
+- **Takeaway:** the fake side of Kaggle transfers to live data; the genuine side does not. Training on 90/10 data and raising the threshold reduce false positives, but at a 5.9% base rate even the best configuration flags about 2.8 genuine accounts per fake caught (39 FP vs 14 TP). A usable model would need genuine training data from the target population, or richer features (post content, comment behaviour, account age).
 
 ## Limitations
-- **One labeler.** Every label is Rebecca's; there is no second labeler, so no Cohen's kappa. Labels from public profiles are a judgment call, especially for low-activity accounts, which is exactly where the models disagree with the labels.
-- **Incomplete coverage.** 221 of 239 collected profiles are labeled; 18 were left blank as too uncertain (12 of the 18 are private, median 14 posts and 53 followers). Dropping the hardest cases likely makes the live numbers look somewhat better than they would be on the full sample.
+- **One labeler.** All labels are Rebecca's judgment from public profiles, so there is no inter-annotator agreement (no Cohen's kappa). Low-activity accounts, exactly where the models disagree with the labels, are the hardest to judge.
+- **Full coverage.** All 239 collected profiles are labeled, including the 18 that an earlier pass left blank as too uncertain. No hard cases are dropped, but those labels are the least certain.
 - **Sampling.** Profiles are commenters on a handful of seed posts (`data/seed_posts.txt`), so the sample reflects those posts' audiences, not Instagram overall. Not every seed post contributes equally.
-- **Private accounts.** About 37% of the labeled profiles are private, so the labeler saw only the profile header for them.
-- **Few fakes.** Only 26 fakes, so recall and PR-AUC CIs are wide (e.g. XGBoost 50/50 PR-AUC 0.43–0.74). Small differences between models are not meaningful.
-- **Deleted accounts.** Only one account has been marked `gone` so far, and it was unlabeled with all-zero features (the scrape returned nothing for it), so its model scores carry no information. The planned re-check of fake-labeled accounts 2–3 weeks after collection is still to do.
+- **Private accounts.** About 39% are private, so the labeler saw only the profile header.
+- **Few fakes.** Only 14 fakes, so recall and PR-AUC CIs are wide (e.g. XGBoost 50/50 PR-AUC 0.59–0.93), and catching all 14 is consistent with a true recall as low as about 0.8. One of the 14 is the `gone` account with an empty record. Small differences between models are not meaningful.
